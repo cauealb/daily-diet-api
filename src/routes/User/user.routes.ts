@@ -37,4 +37,8 @@ export async function UserRoutes(app: FastifyInstance) {
             sucess: 'User created successfully!'
         })
     })
+
+    app.get('/metrics', () => {
+        
+    })
 }
