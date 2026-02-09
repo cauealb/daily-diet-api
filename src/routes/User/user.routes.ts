@@ -5,16 +5,6 @@ import { randomUUID } from "node:crypto";
 
 export async function UserRoutes(app: FastifyInstance) {
     app.post('/', async (request, replay) => {
-        // 1 - Body
-        // 2 - Criar no banco de dados um novo usuário
-        // 3 - Nome, peso e altura não podem estar vazias
-        // 4 - Usuário novo
-
-        // Pegar o body - x
-        // validar com o zod - x
-        // Criar e setar cookies - x
-        // Criar no banco de dados
-
         const bodyShema = z.object({
             nome: z.string(),
             altura: z.number(),
@@ -36,6 +26,15 @@ export async function UserRoutes(app: FastifyInstance) {
             maxAge: 60 * 60 * 24 * 7 // 7 dias
         })
 
-        await db('users')
+        await db('Users').insert({
+            Id: cookieId,
+            Name: nome,
+            Height: altura,
+            Weight: peso
+        })
+
+        return replay.status(201).send({
+            sucess: 'User created successfully!'
+        })
     })
 }
