@@ -13,5 +13,5 @@ app.get('/hello', () => {
 app.listen({
     port: 1212
 }).then(() => {
-    console.log("Servidor inciado! 🚀")
+    console.log("Servidor iniciado com sucesso! 🚀")
 })
