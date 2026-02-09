@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { db } from "../../database";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
+import { VerifyCookieId } from "../../middleware/verify-cookie-id";
 
 export async function UserRoutes(app: FastifyInstance) {
     app.post('/', async (request, replay) => {
@@ -38,7 +39,17 @@ export async function UserRoutes(app: FastifyInstance) {
         })
     })
 
-    app.get('/metrics', () => {
-        
+    app.get('/metrics', {
+        preHandler: [VerifyCookieId]
+    }, () => {
+        // TODO
+        // 1 - "Cookie" do usuário
+        // 2 - Pegar o cookie, e ir até a tabela de refeições e procurar tudo que tem com aquele cookie, que é do usuário e mostrar as métricas
+        // 3 - Pegar todas as refeições que é somente daquele usuário pedindo
+        // 4 - Todas as 4 métricas exibidas
+
+        // Pegar cookie
+        // Chamar somente as refeições daquele cookie
+        // Manipular dados e exibir as métricas
     })
 }
