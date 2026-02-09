@@ -3,7 +3,6 @@ import 'dotenv/config'
 import fastify from "fastify";
 
 const app = fastify();
-
 console.log(process.env.PORT)
 
 app.get('/hello', () => {
