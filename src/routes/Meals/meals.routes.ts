@@ -1,6 +1,34 @@
 import { FastifyInstance } from "fastify";
 import { VerifyCookieId } from "../../middleware/verify-cookie-id";
+import { z } from "zod";
+import { db } from "../../database";
+import { randomUUID } from "crypto";
 
 export async function MealsRoutes(app: FastifyInstance) {
     app.addHook('preHandler', VerifyCookieId);
+
+    app.post('/', async (request, replay) => {
+        const bodySchema = z.object({
+            nome: z.string(),
+            descricao: z.string(),
+            estaNaDieta: z.boolean().optional().default(false)
+        })
+
+        const { nome, descricao, estaNaDieta } = bodySchema.parse(request.body);
+        const cookieId = request.headers.cookie?.split('=')[1]
+
+        console.log(estaNaDieta)
+
+        await db('Meals').insert({
+            IdMeals: randomUUID(),
+            Name: nome, 
+            Description: descricao,
+            ItsOnTheDiet: estaNaDieta,
+            IdUser: cookieId
+        })
+        
+        return replay.status(201).send({
+            sucess: 'Meals created successfully!'
+        })
+    })
 }
