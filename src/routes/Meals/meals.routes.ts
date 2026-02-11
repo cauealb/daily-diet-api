@@ -17,8 +17,6 @@ export async function MealsRoutes(app: FastifyInstance) {
         const { nome, descricao, estaNaDieta } = bodySchema.parse(request.body);
         const cookieId = request.headers.cookie?.split('=')[1]
 
-        console.log(estaNaDieta)
-
         await db('Meals').insert({
             IdMeals: randomUUID(),
             Name: nome, 
@@ -30,5 +28,12 @@ export async function MealsRoutes(app: FastifyInstance) {
         return replay.status(201).send({
             sucess: 'Meals created successfully!'
         })
+    });
+
+    app.get('/', async (request) => {
+        const cookieId = request.headers.cookie?.split('=')[1]
+
+        const meals = await db('Meals').where('IdUser', cookieId).select();
+        return { meals }
     })
 }
