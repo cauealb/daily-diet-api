@@ -46,4 +46,14 @@ export async function MealsRoutes(app: FastifyInstance) {
         const meal = await db('Meals').where({ idUser: cookieid, idMeals: id })
         return { meal }
     })
+
+    app.delete('/:id', async (request, replay) => {
+        const paramsSchema = z.object({ id: z.uuid() })
+        const { id } = paramsSchema.parse(request.params)
+
+        const cookieId = request.headers.cookie?.split('=')[1]
+
+        await db('Meals').where({ idMeals: id, idUser: cookieId }).del();
+        return replay.status(204).send()
+    })
 }
