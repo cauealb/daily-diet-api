@@ -56,4 +56,32 @@ export async function MealsRoutes(app: FastifyInstance) {
         await db('Meals').where({ idMeals: id, idUser: cookieId }).del();
         return replay.status(204).send()
     })
+
+    app.put('/:id', async (request, replay) => {
+        const cookieId = request.headers.cookie?.split('=')[1];
+        
+        const paramsSchema = z.object({ id: z.uuid() })
+        const { id } = paramsSchema.parse(request.params) 
+
+        const bodySchema = z.object({
+            nome: z.string(),
+            descricao: z.string(),
+            data: z.string(),
+            estaNaDieta: z.boolean()
+        })
+
+        const { nome, descricao, data, estaNaDieta } = bodySchema.parse(request.body)
+
+        await db('Meals').where({ idMeals: id, idUser: cookieId })
+            .update({
+                Name: nome,
+                Description: descricao,
+                Date: data,
+                ItsOnTheDiet: estaNaDieta,
+            })
+
+        return replay.status(200).send({
+            sucess: 'Meal successfully updated!'
+        })
+    })
 }
