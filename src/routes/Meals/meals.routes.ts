@@ -36,4 +36,14 @@ export async function MealsRoutes(app: FastifyInstance) {
         const meals = await db('Meals').where('IdUser', cookieId).select();
         return { meals }
     })
+
+    app.get('/:id', async (request) => {
+        const paramsSchema = z.object({ id: z.uuid() });
+        const { id } = paramsSchema.parse(request.params)
+
+        const cookieid = request.headers.cookie?.split('=')[1];
+
+        const meal = await db('Meals').where({ idUser: cookieid, idMeals: id })
+        return { meal }
+    })
 }
