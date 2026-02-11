@@ -12,8 +12,8 @@ declare module 'knex/types/tables.js' {
             IdMeals: string,
             Name: string,
             Description: string,
-            Date: string,
-            ItsOnTheDiet: boolean,
+            Date?: string,
+            ItsOnTheDiet?: boolean,
             IdUser: string
         }
     }
