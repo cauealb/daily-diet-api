@@ -4,6 +4,12 @@ import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { VerifyCookieId } from "../../middleware/verify-cookie-id";
 
+interface Teste {
+    qtdMeals: number,
+    qtdMealsInTheDiet: number,
+    qtdMealsOutsideDiet: number
+}
+
 export async function UserRoutes(app: FastifyInstance) {
     app.post('/', async (request, replay) => {
         const bodyShema = z.object({
@@ -41,15 +47,25 @@ export async function UserRoutes(app: FastifyInstance) {
 
     app.get('/metrics', {
         preHandler: [VerifyCookieId]
-    }, () => {
-        // TODO
-        // 1 - "Cookie" do usuário
-        // 2 - Pegar o cookie, e ir até a tabela de refeições e procurar tudo que tem com aquele cookie, que é do usuário e mostrar as métricas
-        // 3 - Pegar todas as refeições que é somente daquele usuário pedindo
-        // 4 - Todas as 4 métricas exibidas
+    }, async (request) => {
 
-        // Pegar cookie
-        // Chamar somente as refeições daquele cookie
-        // Manipular dados e exibir as métricas
+        const cookieId = request.headers.cookie?.split('=')[1]
+
+        const meals = await db('Meals').where('IdUser', cookieId).select();
+        
+        let qtdMealsInTheDiet = 0;
+        let qtdMealsOutsideDiet = 0;
+
+        for (const meal of meals) {
+            meal.ItsOnTheDiet === 0 ? qtdMealsOutsideDiet++ : qtdMealsInTheDiet++
+        }
+
+        const metrics: Teste = {
+            qtdMeals: meals.length,
+            qtdMealsInTheDiet: qtdMealsInTheDiet,
+            qtdMealsOutsideDiet: qtdMealsOutsideDiet
+        }
+
+        return metrics
     })
 }
