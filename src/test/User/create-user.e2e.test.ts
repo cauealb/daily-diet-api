@@ -10,8 +10,9 @@ describe('Create User (E2E)', () => {
             .post('/user')
             .send({
                 nome: "New User",
-                altura: 1.69,
-                peso: 54.7
+                altura: 1.70,
+                peso: 60.5
             })
+            .expect(201)
     })
 })
