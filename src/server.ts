@@ -1,7 +1,8 @@
 import { app } from "./app"
+import { env } from "./env"
 
 app.listen({
-    port: 1212
+    port: env.PORT
 }).then(() => {
     console.log("Servidor iniciado com sucesso! 🚀")
 })
