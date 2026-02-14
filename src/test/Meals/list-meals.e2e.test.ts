@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { it, describe, beforeAll, afterAll, beforeEach, expect } from 'vitest';
 import { app } from '../../app';
-import { exec } from 'node:child_process';
+import { execSync } from 'node:child_process';
 
 describe('List Meals (E2E)', () => {
     beforeAll(async () => {
@@ -9,8 +9,8 @@ describe('List Meals (E2E)', () => {
     })
 
     beforeEach(async () => {
-        exec("npm run knex -- migrate:rollback --all")
-        exec("npm run knex -- migrate:latest")
+        execSync("npm run knex -- migrate:rollback --all")
+        execSync("npm run knex -- migrate:latest")
     })
 
     afterAll(async () => {

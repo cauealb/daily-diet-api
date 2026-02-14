@@ -1,17 +1,17 @@
 import request from 'supertest'
 import { describe, it, beforeAll, beforeEach, afterAll } from 'vitest'
 import { app } from '../../app'
-import { exec } from 'node:child_process'
+import { execSync } from 'node:child_process'
 
 describe('Create User (E2E)', () => {
-
+    
     beforeAll( async() => {
         await app.ready()
     })
-
+    
     beforeEach(async () => {
-        exec("npm run knex -- migrate:rollback --all")
-        exec("npm run knex -- migrate:latest")
+        execSync("npm run knex -- migrate:rollback --all")
+        execSync("npm run knex -- migrate:latest")
     })
 
     afterAll(async () => {
