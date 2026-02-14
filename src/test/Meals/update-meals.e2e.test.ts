@@ -4,7 +4,7 @@ import { app } from "../../app";
 import { beforeEach } from "node:test";
 import { execSync } from "node:child_process";
 
-describe("Create Meals (E2E)", () => {
+describe("Update Meals (E2E)", () => {
   beforeAll(async () => {
     await app.ready();
   });
@@ -18,7 +18,7 @@ describe("Create Meals (E2E)", () => {
     await app.close();
   });
 
-  it("should be able update a meal", async () => {
+  it("should be able to update a meal", async () => {
     const responsePostCreateUser = await request(app.server)
         .post("/user")
         .send({
