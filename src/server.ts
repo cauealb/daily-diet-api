@@ -1,16 +1,8 @@
-
-import 'dotenv/config'
-import fastify from "fastify";
-import { Routes } from './routes';
-import cookie from '@fastify/cookie'
-
-const app = fastify();
-
-app.register(cookie)
-app.register(Routes);
+import { app } from "./app"
+import { env } from "./env"
 
 app.listen({
-    port: 1212
+    port: env.PORT
 }).then(() => {
     console.log("Servidor iniciado com sucesso! 🚀")
 })

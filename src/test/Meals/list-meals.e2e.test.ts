@@ -1,0 +1,89 @@
+import request from 'supertest';
+import { it, describe, beforeAll, afterAll, beforeEach, expect } from 'vitest';
+import { app } from '../../app';
+import { execSync } from 'node:child_process';
+
+describe('List Meals (E2E)', () => {
+    beforeAll(async () => {
+        await app.ready()
+    })
+
+    beforeEach(async () => {
+        execSync("npm run knex -- migrate:rollback --all")
+        execSync("npm run knex -- migrate:latest")
+    })
+
+    afterAll(async () => {
+        await app.close()
+    })
+
+    it('should be able to list meals', async () => {
+        const responsePostCreateUser = await request(app.server)
+            .post('/user')
+            .send({
+                nome: "New User",
+                altura: 1.70,
+                peso: 60.5
+            })
+
+        const cookieId = responsePostCreateUser.header['set-cookie']
+
+        await request(app.server)
+            .post('/meals')
+            .set('Cookie', cookieId)
+            .send({
+                nome: "Meal",
+                descricao: "Meal",
+                estaNaDieta: true
+            })
+
+        const responseGetMeals = await request(app.server)
+            .get('/meals')
+            .set('Cookie', cookieId)
+
+        expect(responseGetMeals.body.meals[0]).toEqual(
+            expect.objectContaining({
+                Name: "Meal",
+                Description: 'Meal',
+                ItsOnTheDiet: 1,
+            })
+        )
+    })
+
+    it('should be able to list only one meal', async () => {
+        const responsePostCreateUser = await request(app.server)
+            .post('/user')
+            .send({
+                nome: "New User",
+                altura: 1.70,
+                peso: 60.5
+            })
+
+        const cookieId = responsePostCreateUser.header['set-cookie'];
+        await request(app.server)
+            .post('/meals')
+            .set('Cookie', cookieId)
+            .send({
+                nome: "Meal",
+                descricao: "Meal",
+                estaNaDieta: true
+            })
+        
+        const { body } = await request(app.server)
+            .get('/meals')
+            .set('Cookie', cookieId)
+
+        const idMeal = body.meals[0].IdMeals
+        const responseGetOnlyMeal = await request(app.server)
+            .get(`/meals/${idMeal}`)
+            .set('Cookie', cookieId)
+
+        expect(responseGetOnlyMeal.body.meal[0]).toEqual(
+            expect.objectContaining({
+                Name: "Meal",
+                Description: 'Meal',
+                ItsOnTheDiet: 1,
+            })
+        )
+    })
+})

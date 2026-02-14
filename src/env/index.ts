@@ -1,0 +1,24 @@
+import { config } from "dotenv";
+import { z } from 'zod'
+
+if (process.env.NODE_ENV === 'test') {
+    config({ path: '.test.env' })
+} else {
+    config({ path: '.env' })
+}
+
+const envSchema = z.object({
+    PORT: z.coerce.number().default(1212),
+    DATABASE_URL: z.string(),
+    NODE_ENV: z.enum(['development', 'test', 'production']).default('production')
+})
+
+const _env = envSchema.safeParse(process.env);
+
+if (_env.success === false) {
+    console.error("Erro nas váriaveis de ambiente: ", _env.error.format());
+
+    throw Error("Erro nas váriaveis de ambiente!");
+}
+
+export const env = _env.data
