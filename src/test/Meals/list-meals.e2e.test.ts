@@ -49,4 +49,41 @@ describe('List Meals (E2E)', () => {
             })
         )
     })
+
+    it('should be able to list only one meal', async () => {
+        const responsePostCreateUser = await request(app.server)
+            .post('/user')
+            .send({
+                nome: "New User",
+                altura: 1.70,
+                peso: 60.5
+            })
+
+        const cookieId = responsePostCreateUser.header['set-cookie'];
+        const responsePostMeal = await request(app.server)
+            .post('/meals')
+            .set('Cookie', cookieId)
+            .send({
+                nome: "Meal",
+                descricao: "Meal",
+                estaNaDieta: true
+            })
+        
+        const { body } = await request(app.server)
+            .get('/meals')
+            .set('Cookie', cookieId)
+
+        const idMeal = body.meals[0].IdMeals
+        const responseGetOnlyMeal = await request(app.server)
+            .get(`/meals/${idMeal}`)
+            .set('Cookie', cookieId)
+
+        expect(responseGetOnlyMeal.body.meal[0]).toEqual(
+            expect.objectContaining({
+                Name: "Meal",
+                Description: 'Meal',
+                ItsOnTheDiet: 1,
+            })
+        )
+    })
 })
