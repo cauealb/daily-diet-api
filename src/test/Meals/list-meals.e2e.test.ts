@@ -60,7 +60,7 @@ describe('List Meals (E2E)', () => {
             })
 
         const cookieId = responsePostCreateUser.header['set-cookie'];
-        const responsePostMeal = await request(app.server)
+        await request(app.server)
             .post('/meals')
             .set('Cookie', cookieId)
             .send({
